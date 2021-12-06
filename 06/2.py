@@ -1,9 +1,7 @@
 class School:
   def __init__(self):
     file = open("input.txt")
-    self.fish = {}
-    for i in range(9):
-      self.fish[i] = 0
+    self.fish = [0 for _ in range(9)]
 
     ages = file.readline().rstrip()
     file.close()
@@ -16,19 +14,19 @@ class School:
     age_groups = list(range(9))
     age_groups.reverse()
     prev = 0
-    for key in age_groups:
-      temp = self.fish[key]
-      if key  == 0:
+    for age in age_groups:
+      temp = self.fish[age]
+      if age == 0:
         self.fish[8] = temp
         self.fish[6] += temp
 
-      self.fish[key]= prev
+      self.fish[age]= prev
       prev = temp
 
   @property
   def no_fish(self):
     counter = 0
-    for n in self.fish.values():
+    for n in self.fish:
       counter += n
     return counter
         
@@ -36,8 +34,9 @@ class School:
 
 
 school = School()
-print(school.no_fish)
-for i in range(256):
+print(f"Day 0: {school.no_fish} fish")
+DAYS = 256 
+for i in range(DAYS):
   school.next_day()
 
-print(school.no_fish)
+print(f"Day {DAYS}: {school.no_fish} fish")
