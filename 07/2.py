@@ -5,17 +5,14 @@ file.close()
 
 def calc_cost(pos, target):
   d = int(abs(pos - target))
-  return (d*(d + 1) / 2)
+  return int((d*(d + 1) / 2))
 
 data = data.split(",")
 positions = [int(i) for i in data]
-m = max(positions)
-costs = []
-for x in range(m + 1):
-  fuel = 0
-  for pos in positions:
-    fuel += calc_cost(pos, x)
-  costs.append(fuel)
+mean = sum(positions) / len(positions)
+mean = int(mean)
+fuel = 0
+for pos in positions:
+  fuel += calc_cost(pos, mean)
 
-res = int(min(costs))
-print(res)
+print(fuel)
