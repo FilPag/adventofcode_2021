@@ -8,7 +8,8 @@ positions = [int(i) for i in data]
 positions = np.array(positions)
 #s = sum(positions)
 #s = s / len(positions)
-med = np.median(positions)
+med = np.mean(positions)
+print(med)
 
 fuel = 0
 for pos in positions:
