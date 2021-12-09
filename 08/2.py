@@ -4,7 +4,9 @@ def add_char_count(source, target, mapping):
       mapping[c][c2] += 1
 
 def process_signal_base(signal,mapping):
-  
+  signal = sorted(signal)
+  signal = "".join(signal)
+
   match len(signal):
     case 2:
       mapping[1] = signal
@@ -18,22 +20,29 @@ def process_signal_base(signal,mapping):
 def get_overlap(s1, s2):
   return [c for c in s1 if c in s2]
 
-def process_signal_rest(signal, mapping):
+def check_substring(s1, s2):
+  for c in s1:
+    if c not in s2:
+      return False
 
-  print(mapping[4] in signal)
-  print(signal)
+  return True
+
+def process_signal_rest(signal, mapping):
+  signal = sorted(signal)
+  signal = "".join(signal)
+
   if len(signal) == 5:
-    if mapping[1] in signal:
+    if check_substring(mapping[1], signal):
       mapping[3] = signal
     elif len(get_overlap(signal, mapping[4])) == 3:
-      mapping[5] == signal
+      mapping[5] = signal
     else:
-      mapping[2] == signal
+      mapping[2] = signal
   elif len(signal) == 6:
-    if mapping[4] in signal:
-      mapping[9] == signal
+    if check_substring(mapping[4], signal):
+      mapping[9] = signal
     elif len(get_overlap(signal, mapping[1])) == 2:
-      mapping[0] == signal
+      mapping[0] = signal
     else:
       mapping[6] = signal
       
@@ -45,8 +54,16 @@ def decode_signal(signal, mapping):
   for part in signal:
     process_signal_rest(part, mapping)
 
-def get_encoding(mapping):
-  print(mapping)
+def get_output(output, mapping):
+  string = ""
+  for part in output:
+    part = sorted(part)
+    part = "".join(part)
+    num = mapping.index(part) 
+    string += str(num)
+
+  return int(string)
+  
 
 
   
@@ -71,6 +88,10 @@ for line in file:
 
 #total = signals + outputs
 mapping = ["" for _ in range(10)]
-decode_signal(signals[0], mapping)
-get_encoding(mapping)
+csum = 0
+for i in range(len(signals)):
+  decode_signal(signals[i], mapping)
+  csum += get_output(outputs[i], mapping)
+
+print(csum)
 
