@@ -10,6 +10,23 @@ for line in file:
 height = len(heightmap[0])
 width = len(heightmap)
 
+def check_lowpoint(position):
+  x, y = position
+  current = heightmap[x][y]
+  y_neighbors = [x + 1, x - 1 ]
+  x_neighbors = [y + 1, y - 1]
+
+  lowest = True
+  for n in x_neighbors:
+    if n >= 0 and n < width:
+      lowest = lowest and current < heightmap[n][j]
+
+  for n in y_neighbors:
+    if n >= 0 and n < height:
+      lowest = lowest and current < heightmap[i][n]
+
+  return lowest
+
 def check_basin(position, visited):
   x, y = position
   visited.append(position)
@@ -30,13 +47,18 @@ def check_basin(position, visited):
   return 1 + size
 
 visited = []
+lowpoints = []
 basin_sizes = []
 for i in range(width):
   for j in range(height):
     current = (i, j)
-    if current not in visited:
-      size = check_basin(current, visited)
-      basin_sizes.append(size)
+    if check_lowpoint(current):
+      lowpoints.append(current)
+
+for point in lowpoints:
+    size = check_basin(point, visited)
+    basin_sizes.append(size)
+
 
 basin_sizes = sorted(basin_sizes)
 basin_sizes = basin_sizes[-3:]
