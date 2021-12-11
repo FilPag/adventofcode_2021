@@ -35,33 +35,34 @@ def check_unexpected(line):
       if expected != c:
         return c
 
-file = open("input.txt", "r")
+if __name__ == "__main__":
+  file = open("input.txt", "r")
 
-score_table = {
-  ")" : 1,
-  "]" : 2,
-  "}" : 3,
-  ">" : 4,
-}
-incomplete = []
-for line in file:
-  line = line.rstrip()
-  error = check_unexpected(line)
-  if not error:
-    incomplete.append(line)
+  score_table = {
+    ")" : 1,
+    "]" : 2,
+    "}" : 3,
+    ">" : 4,
+  }
+  incomplete = []
+  for line in file:
+    line = line.rstrip()
+    error = check_unexpected(line)
+    if not error:
+      incomplete.append(line)
 
-scores = []
-for line in incomplete:
-  auto_complete = get_autocomplete(line)
-  score = 0
-  for c in auto_complete:
-    score *= 5
-    score += score_table[c]
-  scores.append(score)
+  scores = []
+  for line in incomplete:
+    auto_complete = get_autocomplete(line)
+    score = 0
+    for c in auto_complete:
+      score *= 5
+      score += score_table[c]
+    scores.append(score)
 
-scores = sorted(scores)
-middle = int((len(scores) - 1) / 2)
+  scores = sorted(scores)
+  middle = int((len(scores) - 1) / 2)
 
-middle = scores[middle]
+  middle = scores[middle]
 
-print(middle)
+  print(middle)

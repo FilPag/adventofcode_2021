@@ -23,19 +23,20 @@ def check_unexpected(line):
         return c
 
 
-file = open("input.txt", "r")
+if __name__ == "__main__":
+  file = open("input.txt", "r")
 
-score_table = {
-  ")" : 3,
-  "]" : 57,
-  "}" : 1197,
-  ">" : 25137,
-}
-score = 0
-for line in file:
-  line = line.rstrip()
-  error = check_unexpected(line)
-  if error:
-    score += score_table[error]
+  score_table = {
+    ")" : 3,
+    "]" : 57,
+    "}" : 1197,
+    ">" : 25137,
+  }
+  score = 0
+  for line in file:
+    line = line.rstrip()
+    error = check_unexpected(line)
+    if error:
+      score += score_table[error]
 
-print(score)
+  print(score)
