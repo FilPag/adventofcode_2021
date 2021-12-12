@@ -1,0 +1,62 @@
+from os import path, umask
+
+
+edges = []
+
+def check_cave(c, path_visited):
+  locked = ["start", "stop"]
+  if c in path_visited and c.islower():
+    if "double" in path_visited or c in locked:
+      return False
+    else:
+      path_visited["double"] = True
+
+    return True
+  else:
+    path_visited[c] = 1
+    return True
+
+def find_neighbors(n):
+  neighbors = []
+  for e in edges:
+    a, b = e
+    if a == n:
+      neighbors.append(b)
+    elif b == n:
+      neighbors.append(a)
+  return neighbors
+
+def add_edge(a, b):
+  edge = (a, b)
+
+  if edge not in edges:
+    edges.append(edge)
+
+def count_paths(s, t, path):
+
+  if s == t:
+    return 1
+
+  if not check_cave(s, path):
+    return 0
+  
+  neighbors = find_neighbors(s)
+  c = 0
+  for n in neighbors:
+    n_path = path.copy()
+    c += count_paths(n, t, n_path)
+  return c
+
+
+if __name__ == "__main__":
+  file = open("input.txt", "r")
+
+  for l in file:
+    l = l.rstrip()
+    l = l.split("-")
+    add_edge(l[0], l[1])
+
+  path_visited = {}
+  no_paths = count_paths("start", "end", path_visited)
+
+  print(no_paths)
