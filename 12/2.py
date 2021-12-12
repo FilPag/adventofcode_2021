@@ -1,6 +1,3 @@
-from os import path, umask
-
-
 edges = []
 
 def check_cave(c, path_visited):
@@ -10,7 +7,6 @@ def check_cave(c, path_visited):
       return False
     else:
       path_visited["double"] = True
-
     return True
   else:
     path_visited[c] = 1
@@ -28,18 +24,14 @@ def find_neighbors(n):
 
 def add_edge(a, b):
   edge = (a, b)
-
   if edge not in edges:
     edges.append(edge)
 
 def count_paths(s, t, path):
-
   if s == t:
     return 1
-
   if not check_cave(s, path):
     return 0
-  
   neighbors = find_neighbors(s)
   c = 0
   for n in neighbors:
@@ -50,7 +42,6 @@ def count_paths(s, t, path):
 
 if __name__ == "__main__":
   file = open("input.txt", "r")
-
   for l in file:
     l = l.rstrip()
     l = l.split("-")

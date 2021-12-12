@@ -17,13 +17,10 @@ def add_edge(a, b):
     edges.append(edge)
 
 def count_paths(s, t, path):
-
   if s == t:
     return 1
-
   if s in path and s.islower():
     return 0
-  
   path.append(s)
   neighbors = find_neighbors(s)
   c = 0
@@ -35,7 +32,6 @@ def count_paths(s, t, path):
 
 if __name__ == "__main__":
   file = open("input.txt", "r")
-
   for l in file:
     l = l.rstrip()
     l = l.split("-")
@@ -43,5 +39,4 @@ if __name__ == "__main__":
 
   path = []
   no_paths = count_paths("start", "end", path)
-
   print(no_paths)
