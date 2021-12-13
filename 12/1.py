@@ -12,7 +12,6 @@ def find_neighbors(n):
 
 def add_edge(a, b):
   edge = (a, b)
-
   if edge not in edges:
     edges.append(edge)
 
