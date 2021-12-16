@@ -1,8 +1,22 @@
 from queue import PriorityQueue
 
-def in_bounds(pos, grid):
+def calc_risk(pos, grid):
   x, y = pos
-  return x >= 0 and x < len(grid) and y >= 0 and y < len(grid)
+  x_sector = x // 100
+  y_sector = y // 100
+
+  x_red = x % 100
+  y_red = y % 100
+
+  risk = grid[x_red][y_red]
+  risk = (risk + x_sector + y_sector) % 9
+  if risk == 0:
+    risk = 9
+  return risk
+
+def in_bounds(pos, grid, multiplier = 1):
+  x, y = pos
+  return x >= 0 and x < multiplier * len(grid) and y >= 0 and y < multiplier * len(grid)
 
 def add_to_dict(pos, risk, D):
   if not pos in D:
@@ -27,9 +41,8 @@ def dijkstra(start, target, grid):
 
     neighbors = [(x + 1, y), (x, y + 1), (x - 1, y), (x, y - 1)]
     for n in neighbors:
-      if n not in visited and in_bounds(n, grid):
-        x1, y1 = n
-        n_risk = grid[x1][y1] + risk
+      if n not in visited and in_bounds(n, grid, multiplier = 5):
+        n_risk = risk + calc_risk(n, grid)
         if n == target:
           return n_risk
 
@@ -46,5 +59,5 @@ if __name__ == "__main__":
     line = [int(c) for c in line]
     grid.append(line)
 
-lowest_risk = dijkstra((0, 0), (99, 99), grid)
+lowest_risk = dijkstra((0, 0), (499, 499), grid)
 print(lowest_risk)
