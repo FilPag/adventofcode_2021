@@ -1,42 +1,47 @@
-def print_matrix(dp_matrix):
-  for row in dp_matrix:
-    row_s = ""
-    for col in row:
-      row_s += str(col) + " "
-    print(row_s)
+def add_to_dict(pos, risk, D):
+  if not pos in D:
+    D[pos] = risk
+  else:
+    if D[pos] > risk:
+      D[pos] = risk
+    else:
+      return False
+  return True
+    
+from queue import PriorityQueue
+def dijkstra(start, target, grid):
+  visited = set()
+  queue = PriorityQueue()
+  queue.put((0, start))
+  D = {}
+  
+  while not queue.empty():
+    current = queue.get()
+    risk, (x, y) = current
+    visited.add(current)
 
-def find_min_risk(pos, p_map, dp_matrix):
-  x, y = pos
-  if pos == (len(p_map) - 1, len(p_map) - 1):
-    return 0
-  
-  if dp_matrix[x][y] is not None:
-    return dp_matrix[x][y]
-  
-  neighbors = [(x, y + 1), (x + 1, y)]
-  risks = []
-  for i in range(len(neighbors)):
-    x1, y1 = neighbors[i]
-    if x1 < len(p_map) and y1 < len(p_map):
-      neighbor_risk = p_map[x1][y1] + find_min_risk(neighbors[i], p_map, dp_matrix)
-      risks.append(neighbor_risk)
-  
-  lowest_risk = min(risks)
-  dp_matrix[x][y] = lowest_risk
-  return lowest_risk
+    neighbors = [(x + 1, y), (x, y + 1), (x - 1, y), (x, y - 1)]
+    for n in neighbors:
+      x1, y1 = n
+      if n in visited:
+        continue
+      if x1 >= 0 and x1 < 100 and y1 >= 0 and y1 < 100:
+        n_risk = grid[x1][y1] + risk
+        if n == target:
+          return n_risk
+        if add_to_dict(n, n_risk, D):
+          queue.put((n_risk, n))
   
 
 if __name__ == "__main__":
   file = open("input.txt", "r")
   
-  p_map = []
+  grid = []
   for line in file:
     line = line.rstrip()
     line = [int(c) for c in line]
-    p_map.append(line)
-  
-  dp_matrix = [[None for _ in range(len(p_map))] for _ in range(len(p_map))]
+    grid.append(line)
 
-  risk = find_min_risk((0, 0), p_map, dp_matrix)
-  #print_matrix(dp_matrix)
-  print(risk)
+queue = PriorityQueue()
+lowest_risk = dijkstra((0, 0), (99, 99), grid)
+print(lowest_risk)
