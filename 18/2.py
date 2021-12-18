@@ -1,4 +1,6 @@
 import math
+import json
+
 class Node:
   def __init__(self, val, parent):
     self.val = val
@@ -19,17 +21,30 @@ class Node:
     else:
       return self.left_child.get_leftmost()
 
-  def get_parent_right(self):
-    if self.left_child is None:
-      return self.parent.get_parent_right()
+  @property
+  def magnitude(self):
+    if self.val is not None:
+      return self.val
     else:
-      return self.left_child.get_rightmost()
+      return (3 * self.left_child.magnitude + 2 * self.right_child.magnitude)
+
+  def get_parent_right(self):
+    parent = self.parent
+    if parent == None:
+      return None
+    if parent.right_child is None or parent.right_child is self:
+      return parent.get_parent_right()
+    else:
+      return parent.right_child.get_leftmost()
 
   def get_parent_left(self):
-    if self.right_child is None:
-      return self.parent.get_parent_left()
+    parent = self.parent
+    if parent == None:
+      return None
+    if parent.left_child is None or parent.left_child is self:
+      return parent.get_parent_left()
     else:
-      return self.right_child.get_leftmost()
+      return parent.left_child.get_rightmost()
 
   def split(self):
     if self.val is not None and self.val >= 10:
@@ -52,43 +67,52 @@ class Node:
       return
     
     if depth == 5:
-      print(self)
-      leftmost = self.parent.get_parent_left()
-      rightmost = self.parent.get_parent_right()
-      print(rightmost)
-      print(leftmost)
-      quit()
+      left = self.get_parent_left()
+      right = self.get_parent_right()
 
-      if leftmost != self.left_child:
-        leftmost.val += self.left_child.val
-        self.left_child = None
+      if left:
+        left .val += self.left_child.val
+      if right:
+        right.val += self.right_child.val
 
-      if rightmost!= self.right_child:
-        rightmost.val += self.right_child.val
-        self.right_child = None
-
+      self.left_child = None
+      self.right_child = None
       self.val = 0
     else:
       self.left_child.explode(depth + 1)
       self.right_child.explode(depth + 1)
 
   def __str__(self) -> str:
-    if self.val:
+    if self.val is not None:
       return str(self.val)
     else:
       return "[" + str(self.left_child) + "," + str(self.right_child) + "]"
-
   
 class Tree:
   def __init__(self, array):
     self.root = Node(None, None)
     self.__fill_tree__(self.root, array)
 
+  def __add__(self, other):
+    assert isinstance(other, Tree)
+    new_root = Node(None, None)
+    new_root.left_child = self.root
+    self.root.parent = new_root
+
+    new_root.right_child = other.root
+    other.root.parent = new_root
+    self.root = new_root
+    return self
+
   def explode(self):
     self.root.explode(1)
   
   def split(self):
     return self.root.split()
+  
+  @property
+  def magnitude(self):
+    return self.root.magnitude
 
   def __fill_tree__(self, node, array):
     if isinstance(array[0], int):
@@ -107,21 +131,24 @@ class Tree:
     return str(self.root)
 
 if __name__ == "__main__":
-  '''
   file = open('input.txt')
-    assignment = []
-    for line in file:
-      l = json.loads(line)
-      assignment.append(l)
+  assignment = []
+  for line in file:
+    l = json.loads(line)
+    assignment.append(l)
   
   file.close()
-  '''
 
-  line = [[[[4,3],4],4],[7,[[8,4],9]]]
-  line = [line, [1, 1]]
-  tree = Tree(line)
-  print(tree)
-  tree.explode()
-  print(tree)
-
-
+  maximum_magnitude = 0
+  for line in assignment:
+    rest = assignment.copy()
+    rest.remove(line)
+    for other in rest:
+      tree = Tree(line) + Tree(other)
+      tree.explode()
+      while tree.split():
+        tree.explode()
+      magnitude = tree.magnitude
+      if magnitude > maximum_magnitude:
+        maximum_magnitude = magnitude 
+  print(maximum_magnitude)
